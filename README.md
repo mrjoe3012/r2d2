@@ -1,3 +1,8 @@
+# Notice
+
+This is forked from the original repository. It contains some minor packaging changes for distribution.
+Copyright belongs to the original owners and the original license applies, see LICENSE for more details.
+
 # R2D2: Reliable and Repeatable Detector and Descriptor #
 This repository contains the implementation of the following [paper](https://europe.naverlabs.com/research/publications/r2d2-reliable-and-repeatable-detectors-and-descriptors-for-joint-sparse-local-keypoint-detection-and-feature-extraction/):
 

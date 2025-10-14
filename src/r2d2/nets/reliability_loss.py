@@ -6,7 +6,7 @@ import pdb
 import torch.nn as nn
 import torch.nn.functional as F
 
-from nets.ap_loss import APLoss
+from r2d2.nets.ap_loss import APLoss
 
 
 class PixelAPLoss (nn.Module):

@@ -5,9 +5,9 @@
 
 from PIL import Image
 
-from tools import common
-from tools.dataloader import norm_RGB
-from nets.patchnet import *
+from r2d2.tools import common
+from r2d2.tools.dataloader import norm_RGB
+from r2d2.nets.patchnet import *
 from os import path
 
 from extract import load_network, NonMaxSuppression, extract_multiscale

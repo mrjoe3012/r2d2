@@ -7,10 +7,12 @@ import os, pdb
 from PIL import Image
 import numpy as np
 import torch
+import cv2
 
-from tools import common
-from tools.dataloader import norm_RGB
-from nets.patchnet import *
+from r2d2.tools import common
+from r2d2.tools.dataloader import norm_RGB
+from r2d2.nets.patchnet import *
+import matplotlib.pyplot as plt
 
 
 def load_network(model_fn): 
@@ -119,8 +121,9 @@ def extract_keypoints(args):
     detector = NonMaxSuppression(
         rel_thr = args.reliability_thr, 
         rep_thr = args.repeatability_thr)
-
+    i = 0
     while args.images:
+        i += 1
         img_path = args.images.pop(0)
         
         if img_path.endswith('.txt'):
@@ -147,15 +150,11 @@ def extract_keypoints(args):
         scores = scores.cpu().numpy()
         idxs = scores.argsort()[-args.top_k or None:]
         
-        outpath = img_path + '.' + args.tag
-        print(f"Saving {len(idxs)} keypoints to {outpath}")
-        np.savez(open(outpath,'wb'), 
-            imsize = (W,H),
-            keypoints = xys[idxs], 
-            descriptors = desc[idxs], 
-            scores = scores[idxs])
-
-
+        outpath = f'{i}_{os.path.splitext(os.path.basename(img_path))[0]}.png'
+        fig, ax = plt.subplots(1, 1, figsize=(12, 9))
+        ax.imshow(cv2.imread(img_path))
+        ax.scatter(xys[idxs, 0], xys[idxs, 1])
+        fig.savefig(outpath)
 
 if __name__ == '__main__':
     import argparse

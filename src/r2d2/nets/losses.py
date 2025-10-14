@@ -8,9 +8,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from nets.sampler import *
-from nets.repeatability_loss import *
-from nets.reliability_loss import *
+from r2d2.nets.sampler import *
+from r2d2.nets.repeatability_loss import *
+from r2d2.nets.reliability_loss import *
 
 
 class MultiLoss (nn.Module):

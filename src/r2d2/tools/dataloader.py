@@ -9,8 +9,8 @@ import numpy as np
 import torch
 import torchvision.transforms as tvf
 
-from tools.transforms import instanciate_transformation
-from tools.transforms_tools import persp_apply
+from r2d2.tools.transforms import instanciate_transformation
+from r2d2.tools.transforms_tools import persp_apply
 
 
 RGB_mean = [0.485, 0.456, 0.406]
@@ -358,7 +358,7 @@ if __name__ == '__main__':
     loader = eval(args.dataloader)
     print("Data loader =", loader)
 
-    from tools.viz import show_flow
+    from r2d2.tools.viz import show_flow
     for data in loader:
         aflow = data['aflow']
         H, W = aflow.shape[-2:]
