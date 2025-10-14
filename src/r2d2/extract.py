@@ -12,22 +12,26 @@ import cv2
 from r2d2.tools import common
 from r2d2.tools.dataloader import norm_RGB
 from r2d2.nets.patchnet import *
+from importlib import resources
 import matplotlib.pyplot as plt
 
 
-def load_network(model_fn): 
+def load_network(model_fn, verbose = True): 
     checkpoint = torch.load(model_fn)
-    print("\n>> Creating net = " + checkpoint['net']) 
+    if verbose:
+        print("\n>> Creating net = " + checkpoint['net']) 
+    return load_model(checkpoint)
+
+def load_model(checkpoint, verbose = True):
     net = eval(checkpoint['net'])
     nb_of_weights = common.model_size(net)
-    print(f" ( Model size: {nb_of_weights/1000:.0f}K parameters )")
+    if verbose:
+        print(f" ( Model size: {nb_of_weights/1000:.0f}K parameters )")
 
     # initialization
     weights = checkpoint['state_dict']
     net.load_state_dict({k.replace('module.',''):v for k,v in weights.items()})
     return net.eval()
-
-
 class NonMaxSuppression (torch.nn.Module):
     def __init__(self, rel_thr=0.7, rep_thr=0.7):
         nn.Module.__init__(self)
@@ -155,6 +159,37 @@ def extract_keypoints(args):
         ax.imshow(cv2.imread(img_path))
         ax.scatter(xys[idxs, 0], xys[idxs, 1])
         fig.savefig(outpath)
+
+def get_checkpoint_path(name: str):
+    with resources.path("r2d2.models", f"{name}.pt") as model_path:
+        return model_path
+
+def process_img(img, net, is_bgr: bool = True):
+    # create the non-maxima detector
+    detector = NonMaxSuppression(
+        rel_thr = 0.7, 
+        rep_thr = 0.7)
+    if is_bgr:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = norm_RGB(img)[None] 
+    if torch.cuda.is_available():
+        img = img.cuda()
+    
+    # extract keypoints/descriptors for a single image
+    xys, desc, scores = extract_multiscale(net, img, detector,
+        scale_f   = 2**0.25,
+        min_scale = 0, 
+        max_scale = 1,
+        min_size  = 256, 
+        max_size  = 1024, 
+        verbose = False)
+
+    xys = xys.cpu().numpy()
+    desc = desc.cpu().numpy()
+    scores = scores.cpu().numpy()
+    idxs = scores.argsort()[::-1]
+    
+    return xys[idxs], desc[idxs]
 
 if __name__ == '__main__':
     import argparse
