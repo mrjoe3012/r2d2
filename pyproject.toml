@@ -1,16 +1,16 @@
 [project]
 name = "r2d2"
-version = "0.1.0"
+version = "0.1.1"
 description = "Deep learning feature detection and description."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "kapture>=1.1.10",
     "matplotlib>=3.10.7",
-    "numpy>=2.3.3",
+    "numpy>=2.2.6",
     "opencv-python>=4.11.0.86",
     "pillow>=11.3.0",
-    "scipy>=1.16.2",
+    "scipy>=1.15.3",
     "torch>=2.8.0",
     "torchvision>=0.23.0",
     "tqdm>=4.67.1",
